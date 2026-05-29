@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/common/SmoothScroll";
-import CustomCursor from "@/components/common/CustomCursor";
 import SiteAmbience from "@/components/common/SiteAmbience";
+
+const SmoothScroll = dynamic(() => import("@/components/common/SmoothScroll"));
+const CustomCursor = dynamic(() => import("@/components/common/CustomCursor"));
 
 const inter = Inter({
   variable: "--font-inter",

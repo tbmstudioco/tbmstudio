@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useInView } from "@/hooks/useInView";
 import { cn } from "@/lib/utils";
 
 type FrameVideoProps = {
@@ -14,6 +15,8 @@ type FrameVideoProps = {
   loop?: boolean;
   playsInline?: boolean;
   preload?: "none" | "metadata" | "auto";
+  /** Defer fetching the video file until the element is near the viewport. */
+  lazy?: boolean;
 };
 
 export default function FrameVideo({
@@ -26,15 +29,25 @@ export default function FrameVideo({
   muted = true,
   loop = true,
   playsInline = true,
-  preload = "metadata",
+  preload = "none",
+  lazy = false,
 }: FrameVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const initialSrc = src || fallbackSrc;
-  const [videoSrc, setVideoSrc] = useState(initialSrc);
-  const [isLoading, setIsLoading] = useState(Boolean(frameioFileId && !src));
+  const { ref: containerRef, inView } = useInView<HTMLDivElement>();
+  const shouldLoad = !lazy || inView;
+
+  const [videoSrc, setVideoSrc] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    if (!shouldLoad) {
+      setVideoSrc(undefined);
+      setIsLoading(false);
+      setHasError(false);
+      return;
+    }
+
     if (src) {
       setVideoSrc(src);
       setIsLoading(false);
@@ -83,11 +96,11 @@ export default function FrameVideo({
     return () => {
       cancelled = true;
     };
-  }, [src, frameioFileId, fallbackSrc]);
+  }, [shouldLoad, src, frameioFileId, fallbackSrc]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !videoSrc) return;
 
     if (!autoPlay) {
       video.pause();
@@ -96,7 +109,7 @@ export default function FrameVideo({
 
     const tryPlay = () => {
       void video.play().catch(() => {
-        // Autoplay can fail on mobile without user gesture — don't treat as broken media.
+        // Autoplay can fail on mobile without user gesture.
       });
     };
 
@@ -123,26 +136,28 @@ export default function FrameVideo({
   };
 
   return (
-    <div className={cn("relative h-full w-full bg-black", className)}>
-      {isLoading ? (
-        <div className="absolute inset-0 animate-pulse bg-white/5" aria-hidden="true" />
+    <div ref={containerRef} className={cn("relative h-full w-full bg-black", className)}>
+      {!shouldLoad || isLoading ? (
+        <div className="absolute inset-0 bg-white/5" aria-hidden="true" />
       ) : null}
       {hasError ? (
         <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-[10px] uppercase tracking-[0.2em] text-white/50">
           Video unavailable
         </div>
       ) : null}
-      <video
-        ref={videoRef}
-        className="h-full w-full object-cover"
-        src={videoSrc}
-        poster={poster}
-        muted={muted}
-        loop={loop}
-        playsInline={playsInline}
-        preload={preload}
-        onError={handleVideoError}
-      />
+      {shouldLoad && videoSrc ? (
+        <video
+          ref={videoRef}
+          className="h-full w-full object-cover"
+          src={videoSrc}
+          poster={poster}
+          muted={muted}
+          loop={loop}
+          playsInline={playsInline}
+          preload={preload}
+          onError={handleVideoError}
+        />
+      ) : null}
     </div>
   );
 }

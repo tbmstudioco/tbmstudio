@@ -13,24 +13,32 @@ function getHashFromHref(href: string): string | null {
   return null;
 }
 
+function prefersNativeScroll() {
+  return window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+}
+
 export default function SmoothScroll({
   children,
 }: {
   children: React.ReactNode;
 }) {
   useEffect(() => {
+    if (prefersNativeScroll()) return;
+
     const lenis = new Lenis({
       lerp: 0.05,
       wheelMultiplier: 1,
       smoothWheel: true,
     });
 
+    let frameId = 0;
+
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      frameId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    frameId = requestAnimationFrame(raf);
 
     const handleAnchorClick = (event: MouseEvent) => {
       const anchor = (event.target as HTMLElement).closest("a");
@@ -52,6 +60,7 @@ export default function SmoothScroll({
     document.addEventListener("click", handleAnchorClick);
 
     return () => {
+      cancelAnimationFrame(frameId);
       document.removeEventListener("click", handleAnchorClick);
       lenis.destroy();
     };

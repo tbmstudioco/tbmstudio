@@ -58,7 +58,15 @@ export default function SiteAmbience() {
       return;
     }
 
+    const useSimpleAmbience = window.matchMedia("(pointer: coarse)").matches;
+
     const updateSnakeClip = () => {
+      if (useSimpleAmbience) {
+        snakeLayer.style.clipPath = "inset(0 0 0 0)";
+        snakeLayer.style.opacity = "1";
+        return;
+      }
+
       const showReel = document.getElementById("show-reel");
       if (!showReel) {
         snakeLayer.style.clipPath = "inset(0 0 0 0)";

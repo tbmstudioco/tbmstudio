@@ -120,16 +120,21 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
                 transition={carouselTransition}
                 className="h-full w-full"
               >
-                <FrameVideo
-                  src={item.resolvedSrc ?? item.fallbackSrc}
-                  frameioFileId={item.frameioFileId}
-                  fallbackSrc={item.fallbackSrc}
-                  autoPlay={isCenter}
-                  muted
-                  loop
-                  playsInline
-                  preload={isCenter || absOffset === 1 ? "auto" : "metadata"}
-                />
+                {isCenter ? (
+                  <FrameVideo
+                    src={item.resolvedSrc ?? item.fallbackSrc}
+                    frameioFileId={item.frameioFileId}
+                    fallbackSrc={item.fallbackSrc}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    lazy
+                    preload="none"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-black" aria-hidden="true" />
+                )}
               </motion.div>
 
               <motion.div

@@ -59,7 +59,8 @@ export default function ServicesSection({ featuredReel }: ServicesSectionProps) 
               muted
               loop
               playsInline
-              preload="metadata"
+              lazy
+              preload="none"
             />
 
             <div className="absolute left-0 right-0 bottom-0 p-6 md:p-10 flex items-end justify-between gap-6">

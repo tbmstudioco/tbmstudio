@@ -42,19 +42,19 @@ function PortfolioTile({
               }`}
             />
           ) : null}
-          <FrameVideo
-            src={item.videoSrc}
-            fallbackSrc={item.videoSrc}
-            poster={isLocalPoster ? poster : undefined}
-            autoPlay={isHovered}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className={`absolute inset-0 transition-opacity duration-500 ${
-              isHovered ? "opacity-100" : "opacity-0"
-            }`}
-          />
+          {isHovered ? (
+            <FrameVideo
+              src={item.videoSrc}
+              fallbackSrc={item.videoSrc}
+              poster={isLocalPoster ? poster : undefined}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="none"
+              className="absolute inset-0 opacity-100"
+            />
+          ) : null}
         </>
       ) : (
         <Image
