@@ -40,8 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Local video assets (too large for GitHub; add via hosting/CDN)
-public/videos/**/*.mp4
-public/videos/**/*.mov
-!public/videos/README.md
-!public/videos/**/.gitkeep
+# Video source files (not used on site; keep local only)
+public/videos/**/*-source.mp4
