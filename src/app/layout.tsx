@@ -8,12 +8,19 @@ import SiteAmbience from "@/components/common/SiteAmbience";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  adjustFontFallback: true,
 });
 
 const playfair = Playfair_Display({
   variable: "--font-serif",
   subsets: ["latin"],
   style: ["italic"],
+  weight: "400",
+  display: "swap",
+  preload: false,
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
