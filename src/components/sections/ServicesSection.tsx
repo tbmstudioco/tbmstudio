@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import FadeIn from "@/components/animations/FadeIn";
 import FrameVideo from "@/components/common/FrameVideo";
+import { mergeRefs, useInView } from "@/hooks/useInView";
 import type { SiteVideo } from "@/types/content";
 
 type ServicesSectionProps = {
@@ -12,6 +13,7 @@ type ServicesSectionProps = {
 
 export default function ServicesSection({ featuredReel }: ServicesSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const { ref: inViewRef, inView } = useInView<HTMLElement>();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -24,7 +26,7 @@ export default function ServicesSection({ featuredReel }: ServicesSectionProps) 
 
   return (
     <section
-      ref={sectionRef}
+      ref={mergeRefs(sectionRef, inViewRef)}
       id="show-reel"
       className="relative py-40 px-6 section-surface overflow-hidden [perspective:1300px]"
     >
@@ -59,8 +61,8 @@ export default function ServicesSection({ featuredReel }: ServicesSectionProps) 
               muted
               loop
               playsInline
-              lazy
-              preload="none"
+              load={inView}
+              preload="metadata"
             />
 
             <div className="absolute left-0 right-0 bottom-0 p-6 md:p-10 flex items-end justify-between gap-6">

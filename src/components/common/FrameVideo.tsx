@@ -15,7 +15,9 @@ type FrameVideoProps = {
   loop?: boolean;
   playsInline?: boolean;
   preload?: "none" | "metadata" | "auto";
-  /** Defer fetching the video file until the element is near the viewport. */
+  /** Parent-controlled visibility — use when the video sits inside transformed/animated containers. */
+  load?: boolean;
+  /** Use an internal viewport observer when `load` is not provided. */
   lazy?: boolean;
 };
 
@@ -29,12 +31,13 @@ export default function FrameVideo({
   muted = true,
   loop = true,
   playsInline = true,
-  preload = "none",
+  preload = "metadata",
+  load,
   lazy = false,
 }: FrameVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { ref: containerRef, inView } = useInView<HTMLDivElement>();
-  const shouldLoad = !lazy || inView;
+  const shouldLoad = load ?? (!lazy || inView);
 
   const [videoSrc, setVideoSrc] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -119,9 +122,11 @@ export default function FrameVideo({
     }
 
     video.addEventListener("canplay", tryPlay, { once: true });
+    video.addEventListener("loadeddata", tryPlay, { once: true });
 
     return () => {
       video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("loadeddata", tryPlay);
     };
   }, [autoPlay, videoSrc]);
 
@@ -136,7 +141,7 @@ export default function FrameVideo({
   };
 
   return (
-    <div ref={containerRef} className={cn("relative h-full w-full bg-black", className)}>
+    <div ref={lazy && load === undefined ? containerRef : undefined} className={cn("relative h-full w-full bg-black", className)}>
       {!shouldLoad || isLoading ? (
         <div className="absolute inset-0 bg-white/5" aria-hidden="true" />
       ) : null}

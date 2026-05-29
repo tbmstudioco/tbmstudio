@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import FrameVideo from "@/components/common/FrameVideo";
+import { mergeRefs, useInView } from "@/hooks/useInView";
 import type { SiteVideo } from "@/types/content";
 
 function wrapIndex(index: number, length: number) {
@@ -50,6 +51,7 @@ function useCarouselOffset() {
 function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
   const prefersReducedMotion = useReducedMotion();
   const offsetStep = useCarouselOffset();
+  const { ref: carouselRef, inView: carouselInView } = useInView<HTMLDivElement>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -77,6 +79,7 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
 
   return (
     <div
+      ref={carouselRef}
       className="relative mx-auto h-[min(72vh,560px)] min-h-[480px] max-w-6xl sm:h-[600px] md:h-[620px] [perspective:1400px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -129,8 +132,8 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
                     muted
                     loop
                     playsInline
-                    lazy
-                    preload="none"
+                    load={carouselInView}
+                    preload="metadata"
                   />
                 ) : (
                   <div className="h-full w-full bg-black" aria-hidden="true" />
