@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import FrameVideo from "@/components/common/FrameVideo";
 import { mergeRefs, useInView } from "@/hooks/useInView";
@@ -214,7 +212,7 @@ export default function HomeWorkSection({ shortFormVideos }: HomeWorkSectionProp
   return (
     <section id="work" className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-32 section-surface">
       <div className="relative z-10 mx-auto max-w-7xl">
-        <FadeIn className="mb-20 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <FadeIn className="mb-20">
           <div className="text-center md:text-left">
             <p className="section-eyebrow mb-4 tracking-[0.35em] text-white/45">
               Our Work
@@ -223,13 +221,6 @@ export default function HomeWorkSection({ shortFormVideos }: HomeWorkSectionProp
               Creative
             </h2>
           </div>
-          <Link
-            href="/portfolio"
-            className="inline-flex items-center justify-center gap-2 self-center text-[10px] font-medium uppercase tracking-[0.25em] text-white/60 transition-colors hover:text-white md:self-auto"
-          >
-            View full portfolio
-            <ArrowUpRight size={14} />
-          </Link>
         </FadeIn>
 
         <FadeIn delay={0.15}>

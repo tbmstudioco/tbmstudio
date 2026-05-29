@@ -58,7 +58,7 @@ export default function PricingSection() {
                 </ul>
 
                 <Link
-                  href={plan.id === "premium" ? "/portfolio" : "#contact"}
+                  href="#contact"
                   className={`block w-full rounded-full py-4 text-center text-[10px] font-medium tracking-[0.25em] uppercase transition-all ${
                     plan.highlighted
                       ? "bg-white text-black hover:opacity-90"

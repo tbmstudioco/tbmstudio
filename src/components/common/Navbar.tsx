@@ -8,10 +8,10 @@ import TbmLogo from "./TbmLogo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { name: "Work", href: "/portfolio" },
+  { name: "Work", href: "/#work" },
   { name: "Pricing", href: "/#pricing" },
   { name: "FAQ", href: "/#faq" },
-  { name: "Dashboard", href: "/dashboard" },
+  // { name: "Dashboard", href: "/dashboard" }, // temporarily hidden
   { name: "About", href: "/#process" },
 ];
 

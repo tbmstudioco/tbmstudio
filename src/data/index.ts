@@ -143,7 +143,7 @@ export const pricingPlans = [
       "Brand style systems",
       "Dedicated editor team",
     ],
-    cta: "View Premium Work",
+    cta: "Book a call",
     highlighted: false,
   },
 ];
