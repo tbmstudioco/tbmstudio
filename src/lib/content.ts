@@ -8,6 +8,7 @@ import {
   isFrameioConfigured,
   listFrameioFolderFiles,
 } from "@/lib/frameio";
+import { getPublicVideoUrl } from "@/lib/video-url";
 import type { PortfolioGridItem, SiteVideo } from "@/types/content";
 
 function prefersLocalVideos() {
@@ -48,23 +49,39 @@ function cleanTitle(name: string) {
   return name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
 }
 
+function resolveSiteVideo(video: SiteVideo): SiteVideo {
+  return {
+    ...video,
+    fallbackSrc: getPublicVideoUrl(video.fallbackSrc) ?? video.fallbackSrc,
+    resolvedSrc: getPublicVideoUrl(video.resolvedSrc) ?? video.resolvedSrc,
+  };
+}
+
+function resolvePortfolioItem(item: PortfolioGridItem): PortfolioGridItem {
+  return {
+    ...item,
+    videoSrc: getPublicVideoUrl(item.videoSrc),
+    posterSrc: getPublicVideoUrl(item.posterSrc),
+  };
+}
+
 function toSiteVideo(asset: Awaited<ReturnType<typeof getFrameioAsset>>, index: number): SiteVideo {
   const fallback = fallbackShortFormVideos[index % fallbackShortFormVideos.length];
 
-  return {
+  return resolveSiteVideo({
     id: index + 1,
     title: cleanTitle(asset.name),
     frameioFileId: asset.id,
     fallbackSrc: fallback.fallbackSrc,
     resolvedSrc: asset.streamUrl,
-  };
+  });
 }
 
 function toPortfolioItem(asset: Awaited<ReturnType<typeof getFrameioAsset>>, index: number): PortfolioGridItem {
   const fallback = fallbackPortfolioItems[index % fallbackPortfolioItems.length];
   const palette = ACCENT_PALETTES[index % ACCENT_PALETTES.length];
 
-  return {
+  return resolvePortfolioItem({
     id: index + 1,
     title: cleanTitle(asset.name),
     category: asset.isVideo ? "Video" : "Creative",
@@ -76,44 +93,44 @@ function toPortfolioItem(asset: Awaited<ReturnType<typeof getFrameioAsset>>, ind
     gridClass: GRID_PATTERNS[index % GRID_PATTERNS.length],
     accentFrom: palette.accentFrom,
     accentTo: palette.accentTo,
-  };
+  });
 }
 
 export async function getFeaturedReelVideo(): Promise<SiteVideo> {
   if (prefersLocalVideos()) {
-    return featuredReelVideo;
+    return resolveSiteVideo(featuredReelVideo);
   }
 
   const featuredFileId = process.env.FRAMEIO_FEATURED_REEL_FILE_ID;
 
   if (!featuredFileId) {
-    return featuredReelVideo;
+    return resolveSiteVideo(featuredReelVideo);
   }
 
   try {
     const asset = await getFrameioAsset(featuredFileId);
 
-    return {
+    return resolveSiteVideo({
       id: 1,
       title: cleanTitle(asset.name),
       frameioFileId: asset.id,
       fallbackSrc: featuredReelVideo.fallbackSrc,
       resolvedSrc: asset.streamUrl,
-    };
+    });
   } catch {
-    return featuredReelVideo;
+    return resolveSiteVideo(featuredReelVideo);
   }
 }
 
 export async function getShortFormVideos(): Promise<SiteVideo[]> {
   if (prefersLocalVideos()) {
-    return fallbackShortFormVideos;
+    return fallbackShortFormVideos.map(resolveSiteVideo);
   }
 
   const folderId = process.env.FRAMEIO_SHORT_FORM_FOLDER_ID;
 
   if (!folderId) {
-    return fallbackShortFormVideos;
+    return fallbackShortFormVideos.map(resolveSiteVideo);
   }
 
   try {
@@ -121,36 +138,36 @@ export async function getShortFormVideos(): Promise<SiteVideo[]> {
     const videos = assets.filter((asset) => asset.isVideo && asset.streamUrl);
 
     if (!videos.length) {
-      return fallbackShortFormVideos;
+      return fallbackShortFormVideos.map(resolveSiteVideo);
     }
 
     return videos.map(toSiteVideo);
   } catch {
-    return fallbackShortFormVideos;
+    return fallbackShortFormVideos.map(resolveSiteVideo);
   }
 }
 
 export async function getPortfolioItems(): Promise<PortfolioGridItem[]> {
   if (prefersLocalVideos()) {
-    return fallbackPortfolioItems;
+    return fallbackPortfolioItems.map(resolvePortfolioItem);
   }
 
   const folderId = process.env.FRAMEIO_PORTFOLIO_FOLDER_ID;
 
   if (!folderId) {
-    return fallbackPortfolioItems;
+    return fallbackPortfolioItems.map(resolvePortfolioItem);
   }
 
   try {
     const assets = await listFrameioFolderFiles(folderId);
 
     if (!assets.length) {
-      return fallbackPortfolioItems;
+      return fallbackPortfolioItems.map(resolvePortfolioItem);
     }
 
     return assets.map(toPortfolioItem);
   } catch {
-    return fallbackPortfolioItems;
+    return fallbackPortfolioItems.map(resolvePortfolioItem);
   }
 }
 
