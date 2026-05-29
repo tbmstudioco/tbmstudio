@@ -29,10 +29,6 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "TBM STUDIOZ | We Don't Edit Videos. We Build Attention.",
   description: "Premium creative video editing agency. We specialize in Social Media, YouTube, Ads, and Motion Graphics.",
-  icons: {
-    icon: [{ url: "/tbm-logo.png", type: "image/png" }],
-    apple: [{ url: "/tbm-logo.png", type: "image/png" }],
-  },
 };
 
 export default function RootLayout({
