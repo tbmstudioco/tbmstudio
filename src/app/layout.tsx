@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Inter, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import SiteAmbience from "@/components/common/SiteAmbience";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
           <CustomCursor />
           <div className="relative z-[1]">{children}</div>
         </SmoothScroll>
+        <Analytics />
       </body>
     </html>
   );
