@@ -52,8 +52,7 @@ export default function HeroSection() {
         </h1>
 
         <p className="mb-10 max-w-[20rem] text-base font-light leading-relaxed text-white/55 sm:mb-16 sm:max-w-[460px] sm:text-xl">
-          <span className="sm:hidden">Affordable, fast and human powered video edits.</span>
-          <span className="hidden sm:inline">so you can focus on growing.</span>
+          so you can focus on growing.
         </p>
 
         <HeroCTAs />
