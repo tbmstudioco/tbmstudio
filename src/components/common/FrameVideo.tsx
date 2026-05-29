@@ -107,7 +107,21 @@ export default function FrameVideo({
 
     if (!autoPlay) {
       video.pause();
-      return;
+
+      const showFirstFrame = () => {
+        if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+          video.currentTime = 0.01;
+        }
+      };
+
+      video.addEventListener("loadedmetadata", showFirstFrame, { once: true });
+      video.addEventListener("loadeddata", showFirstFrame, { once: true });
+      showFirstFrame();
+
+      return () => {
+        video.removeEventListener("loadedmetadata", showFirstFrame);
+        video.removeEventListener("loadeddata", showFirstFrame);
+      };
     }
 
     const tryPlay = () => {
