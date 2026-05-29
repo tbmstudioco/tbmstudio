@@ -111,20 +111,13 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/5 px-6 py-5">
-        <div className="max-w-7xl mx-auto flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-7xl mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[11px] text-white/45">
             © {new Date().getFullYear()} TBM STUDIOZ. All rights reserved.
           </p>
-          <p className="text-[11px] text-white/30 sm:flex-1 sm:text-center">
+          <p className="text-[11px] text-white/30">
             Crafted with obsession in India 🇮🇳
           </p>
-          <Link
-            href="/"
-            className="inline-flex shrink-0 self-end sm:self-auto opacity-60 transition-opacity hover:opacity-100"
-            aria-label="TBM STUDIOZ home"
-          >
-            <TbmLogo variant="footer" />
-          </Link>
         </div>
       </div>
     </footer>

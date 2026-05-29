@@ -120,6 +120,15 @@ html.lenis {
   box-shadow: 0 4px 24px rgba(109, 92, 255, 0.35);
 }
 
+.hero-cta-primary {
+  background: linear-gradient(135deg, #8b7cff 0%, #a78bfa 100%);
+  box-shadow: 0 4px 20px rgba(109, 92, 255, 0.3);
+}
+
+.hero-cta-secondary {
+  box-shadow: none;
+}
+
 .text-gradient {
   background: linear-gradient(135deg, #ffffff 0%, #b8aeff 45%, #ff9f43 100%);
   -webkit-background-clip: text;

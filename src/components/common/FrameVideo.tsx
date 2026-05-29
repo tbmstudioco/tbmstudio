@@ -69,6 +69,7 @@ export default function FrameVideo({
       } catch {
         if (!cancelled) {
           setVideoSrc(fallbackSrc);
+          setHasError(false);
         }
       } finally {
         if (!cancelled) {
@@ -95,7 +96,7 @@ export default function FrameVideo({
 
     const tryPlay = () => {
       void video.play().catch(() => {
-        setHasError(true);
+        // Autoplay can fail on mobile without user gesture — don't treat as broken media.
       });
     };
 
@@ -110,6 +111,16 @@ export default function FrameVideo({
       video.removeEventListener("canplay", tryPlay);
     };
   }, [autoPlay, videoSrc]);
+
+  const handleVideoError = () => {
+    if (videoSrc !== fallbackSrc) {
+      setVideoSrc(fallbackSrc);
+      setHasError(false);
+      return;
+    }
+
+    setHasError(true);
+  };
 
   return (
     <div className={cn("relative h-full w-full bg-black", className)}>
@@ -130,7 +141,7 @@ export default function FrameVideo({
         loop={loop}
         playsInline={playsInline}
         preload={preload}
-        onError={() => setHasError(true)}
+        onError={handleVideoError}
       />
     </div>
   );

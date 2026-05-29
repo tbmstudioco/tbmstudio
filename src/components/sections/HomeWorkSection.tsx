@@ -31,8 +31,25 @@ const carouselTransition = {
   ease: carouselEase,
 };
 
+function useCarouselOffset() {
+  const [offsetStep, setOffsetStep] = useState(230);
+
+  useEffect(() => {
+    const update = () => {
+      setOffsetStep(window.innerWidth < 640 ? 168 : window.innerWidth < 768 ? 200 : 230);
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return offsetStep;
+}
+
 function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
   const prefersReducedMotion = useReducedMotion();
+  const offsetStep = useCarouselOffset();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -60,7 +77,7 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
 
   return (
     <div
-      className="relative mx-auto h-[620px] max-w-6xl [perspective:1400px]"
+      className="relative mx-auto h-[min(72vh,560px)] min-h-[480px] max-w-6xl sm:h-[600px] md:h-[620px] [perspective:1400px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -78,7 +95,7 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
             key={item.id}
             initial={false}
             animate={{
-              x: offset * (prefersReducedMotion ? 200 : 230),
+              x: offset * (prefersReducedMotion ? offsetStep * 0.85 : offsetStep),
               y: isCenter ? -8 : absOffset * 6,
               scale: isCenter ? 1 : 0.84 - absOffset * 0.04,
               rotateY: prefersReducedMotion ? 0 : offset * -16,
@@ -86,7 +103,7 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
               zIndex: 10 - absOffset,
             }}
             transition={carouselTransition}
-            className="absolute left-1/2 top-1/2 w-[260px] md:w-[300px] aspect-[9/16] -translate-x-1/2 -translate-y-1/2 will-change-transform"
+            className="absolute left-1/2 top-1/2 w-[min(68vw,240px)] sm:w-[260px] md:w-[300px] aspect-[9/16] -translate-x-1/2 -translate-y-1/2 will-change-transform"
             style={{ transformStyle: "preserve-3d" }}
           >
             <motion.div
@@ -134,7 +151,7 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 420, damping: 24 }}
-            className="absolute left-1/2 top-1/2 z-20 flex h-11 w-11 -translate-x-[210px] -translate-y-1/2 items-center justify-center rounded-full bg-[#ff6f2c] text-lg text-white shadow-lg md:-translate-x-[260px]"
+            className="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#ff6f2c] text-base text-white shadow-lg sm:left-4 sm:h-11 sm:w-11 sm:text-lg md:left-1/2 md:-translate-x-[260px]"
           >
             &#8592;
           </motion.button>
@@ -146,7 +163,7 @@ function ShortFormCarousel({ videos }: { videos: SiteVideo[] }) {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 420, damping: 24 }}
-            className="absolute left-1/2 top-1/2 z-20 flex h-11 w-11 translate-x-[170px] -translate-y-1/2 items-center justify-center rounded-full bg-[#ff6f2c] text-lg text-white shadow-lg md:translate-x-[220px]"
+            className="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#ff6f2c] text-base text-white shadow-lg sm:right-4 sm:h-11 sm:w-11 sm:text-lg md:right-auto md:left-1/2 md:translate-x-[220px]"
           >
             &#8594;
           </motion.button>
@@ -187,7 +204,7 @@ type HomeWorkSectionProps = {
 
 export default function HomeWorkSection({ shortFormVideos }: HomeWorkSectionProps) {
   return (
-    <section id="work" className="relative overflow-hidden px-4 py-32 sm:px-6 section-surface">
+    <section id="work" className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-32 section-surface">
       <div className="relative z-10 mx-auto max-w-7xl">
         <FadeIn className="mb-20 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div className="text-center md:text-left">
